@@ -1,6 +1,6 @@
  # How to Install
 ```shell
-pip install FIMdeneme
+pip install FIMProject
 ```
 # How to Use It
 ```python
