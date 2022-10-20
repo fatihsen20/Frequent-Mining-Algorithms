@@ -1,8 +1,46 @@
 import numpy as np
 from itertools import combinations
 
+def showDatabase(DATABASE:np.array, SingleItems:np.array):
+    """
+    *************************************************
+    -       This method shows binary database.      -
+    *************************************************
+    """
+    for i in range(0, DATABASE.shape[0]):
+        tr = DATABASE[i,:]
+        I = np.nonzero(tr>0)[0]
+        print(i,": ",SingleItems[I])
+
+def databaseOptimision(DATABASE:np.array, SingleItems:np.array, minsupp:int) -> np.array:
+    """
+    ***********************************************************
+    *  This method extracts individual items from the         * 
+    *  database that do not exceed the minimum support value. *
+    ***********************************************************
+    """
+    SingleItemsSupport = np.sum(DATABASE,axis = 0)
+    ReminderItem = np.nonzero(SingleItemsSupport >= minsupp)[0]
+    DATABASE = DATABASE[:,ReminderItem]
+    SingleItems = SingleItems[ReminderItem]
+    SingleItemsSupport = SingleItemsSupport[ReminderItem]
+    return SingleItemsSupport
+
+def listToString(SingleItems:np.array,s:list) -> str:
+    """
+    *************************************************
+    - This method convert list to string.           -
+    - s: New frequent item list.                    -
+    - s Type: List.                                 -
+    *************************************************
+    """
+    str1 = "" 
+    for ele in s: 
+        str1 += SingleItems[ele] + ","
+    return str1[:-1]
+
 class Apriori:
-    def __init__(self,DATABASE,SingleItems,minsupp):
+    def __init__(self,DATABASE:np.array,SingleItems:np.array,minsupp:int):
         """
         *************************************************
         - DATABASE: Binary numpy 2d array.              -
@@ -18,45 +56,7 @@ class Apriori:
         self.minsupp = minsupp
         self.FREQUENTITEMSETS = {}
 
-    def showDatabase(self):
-        """
-        *************************************************
-        -       This method shows binary database.      -
-        *************************************************
-        """
-        for i in range(0, self.DATABASE.shape[0]):
-            tr = self.DATABASE[i,:]
-            I = np.nonzero(tr>0)[0]
-            print(i,": ",self.SingleItems[I])
-
-    def databaseOptimision(self):
-        """
-        ***********************************************************
-        *  This method extracts individual items from the         * 
-        *  database that do not exceed the minimum support value. *
-        ***********************************************************
-        """
-        SingleItemsSupport = np.sum(self.DATABASE,axis = 0)
-        ReminderItem = np.nonzero(SingleItemsSupport >= self.minsupp)[0]
-        self.DATABASE = self.DATABASE[:,ReminderItem]
-        self.SingleItems = self.SingleItems[ReminderItem]
-        SingleItemsSupport = SingleItemsSupport[ReminderItem]
-        
-
-    def listToString(self,s):
-        """
-        *************************************************
-        - This method convert list to string.           -
-        - s: New frequent item list.                    -
-        - s Type: List.                                 -
-        *************************************************
-        """
-        str1 = "" 
-        for ele in s: 
-            str1 += self.SingleItems[ele] + ","
-        return str1[:-1]
-
-    def doesExist(itm,transaction):
+    def doesExist(itm,transaction) -> bool:
         """
         **********************************************************
         - This method checks the presence of itm in transaction. -
@@ -69,7 +69,7 @@ class Apriori:
 
         return E
 
-    def calcAbsSup(self,itm): 
+    def calcAbsSup(self,itm) -> int: 
         """
         **********************************************************
         -       This method calc the itm absolute support.       -
@@ -83,7 +83,7 @@ class Apriori:
         
         return AbsSupp
     
-    def candidateGeneration(Fkm1):
+    def candidateGeneration(Fkm1) -> list:
         Ck= [] 
         for i in range(0, len(Fkm1)-1):
             for j in range(i+1,len(Fkm1)):
@@ -99,8 +99,8 @@ class Apriori:
                         Ck.append(NewItem)              
         return Ck
     
-    def findFrequentItems(self):
-        self.databaseOptimision()
+    def findFrequentItems(self) -> dict:
+        _ = databaseOptimision(self.DATABASE, self.SingleItems, self.minsupp)
         NumOfItems = self.DATABASE.shape[1]
         Fk = []
         k=1
@@ -110,7 +110,7 @@ class Apriori:
 
             if self.minsupp <= AbsSupp:
                 Fk.append(itm)
-                self.FREQUENTITEMSETS[self.listToString(itm)] = AbsSupp
+                self.FREQUENTITEMSETS[listToString(self.SingleItems,itm)] = AbsSupp
         
         loop = True
         k = 2
@@ -122,7 +122,7 @@ class Apriori:
                 abssupp = self.calcAbsSup(adayoge)
                 if self.minsupp <= abssupp:
                     Fk.append(adayoge)
-                    self.FREQUENTITEMSETS[self.listToString(adayoge)] = abssupp
+                    self.FREQUENTITEMSETS[listToString(self.SingleItems,adayoge)] = abssupp
             k+=1       
             if len(Ck)* len(Fk) == 0:
                 loop = False
@@ -143,19 +143,12 @@ class Apriori:
             print("#",i+1,FREQUENTITEMSETS_[i],"Supp:",SUPPORTS[i])
 
 class Eclat:
-    def __init__(self, DATABASE, SingleItems, minsupp):
+    def __init__(self, DATABASE:np.array, SingleItems:np.array, minsupp:int):
         self.DATABASE = DATABASE
         self.SingleItems = SingleItems
         self.minsupp = minsupp
         self.VDB = []
         self.FREQUENTITEMSETS = {}
-        
-    def databaseOptimision(self):
-        SingleItemsSupport = np.sum(self.DATABASE,axis = 0)
-        ReminderItems = np.nonzero(SingleItemsSupport >= self.minsupp)[0]
-        self.DATABASE = self.DATABASE[:,ReminderItems]
-        self.SingleItems = self.SingleItems[ReminderItems]
-        SingleItemsSupport = SingleItemsSupport[ReminderItems]
     
     def HDtoVDB(self):
         NumOfItems = self.DATABASE.shape[1]
@@ -170,21 +163,8 @@ class Eclat:
     def showVDBdatabase(self):
         for i in range(0,self.SingleItems.shape[0]):
             print(self.SingleItems[i],':',self.VDB[i])
-    
-    def listToString(self,s):
-        """
-        *************************************************
-        - This method convert list to string.           -
-        - s: New frequent item list.                    -
-        - s Type: List.                                 -
-        *************************************************
-        """
-        str1 = "" 
-        for ele in s: 
-            str1 += self.SingleItems[ele] + ","
-        return str1[:-1]
             
-    def eclatMiner(self,item,Tid):
+    def eclatMiner(self,item,Tid) -> dict:
      tmp = item[-1]
      tid = []
      for itx in range(tmp+1,len(self.VDB)): 
@@ -193,18 +173,18 @@ class Eclat:
                     
          if len(tid)>= self.minsupp:
             NewItem = np.hstack((item,itx))
-            self.FREQUENTITEMSETS[self.listToString(NewItem)] = len(tid)
+            self.FREQUENTITEMSETS[listToString(self.SingleItems,NewItem)] = len(tid)
             self.FREQUENTITEMSETS = self.eclatMiner(NewItem,tid)
             tid = []
      return self.FREQUENTITEMSETS
     
-    def findFrequentItems(self):
-        self.databaseOptimision()
+    def findFrequentItems(self) -> dict:
+        _ = databaseOptimision(self.DATABASE, self.SingleItems, self.minsupp)
         self.HDtoVDB()
 
         for i in range(0,len(self.VDB)):
             item = np.array([i])
-            self.FREQUENTITEMSETS[self.listToString(item)] = len(self.VDB[i])
+            self.FREQUENTITEMSETS[listToString(self.SingleItems,item)] = len(self.VDB[i])
             self.FREQUENTITEMSETS = self.eclatMiner(item,self.VDB[i])
         
         return self.FREQUENTITEMSETS
@@ -224,7 +204,7 @@ class Eclat:
             print("#",i+1,FREQUENTITEMSETS_[i],"Supp:",SUPPORTS[i])
 
 class HMine:
-    def __init__(self, DATABASE, SingleItems, minsupp):
+    def __init__(self, DATABASE:np.array, SingleItems:np.array, minsupp:int):
         """
         *************************************************
         - DATABASE: Binary numpy 2d array.              -
@@ -239,46 +219,8 @@ class HMine:
         self.SingleItems = SingleItems
         self.minsupp = minsupp
         self.FREQUENTITEMSETS = {}
-    
-    def showDB(self):
-        """
-        *************************************************
-        -       This method shows binary database.      -
-        *************************************************
-        """
-        for i in range(0, self.DATABASE.shape[0]):
-            tr = self.DATABASE[i,:]
-            I = np.nonzero(tr>0)[0]
-            print(i,": ",self.SingleItems[I])
 
-    def databaseOptimision(self):
-        """
-        ***********************************************************
-        *  This method extracts individual items from the         * 
-        *  database that do not exceed the minimum support value. *
-        ***********************************************************
-        """
-        SingleItemsSupport = np.sum(self.DATABASE,axis = 0)
-        ReminderItems = np.nonzero(SingleItemsSupport >= self.minsupp)[0]
-        self.DATABASE = self.DATABASE[:,ReminderItems]
-        self.SingleItems = self.SingleItems[ReminderItems]
-        SingleItemsSupport = SingleItemsSupport[ReminderItems]
-        return SingleItemsSupport
-    
-    def listToString(self,s):
-        """
-        *************************************************
-        - This method convert list to string.           -
-        - s: New frequent item list.                    -
-        - s Type: List.                                 -
-        *************************************************
-        """
-        str1 = "" 
-        for ele in s: 
-            str1 += self.SingleItems[ele]+","  
-        return str1[:-1]
-
-    def hMiner(self,DATABASE_,itemset):
+    def hMiner(self,DATABASE_,itemset) -> dict:
         """
         *************************************************
         - This method allows data mining to be done.    -
@@ -294,20 +236,20 @@ class HMine:
         for suffix in Suffixes:
             NewItem = 1*itemset
             NewItem.append(suffix)
-            self.FREQUENTITEMSETS[self.listToString(NewItem)] = InitialSupports[suffix]
+            self.FREQUENTITEMSETS[listToString(self.SingleItems,NewItem)] = InitialSupports[suffix]
             self.FREQUENTITEMSETS = self.hMiner(ProjectedDatabase,NewItem)
         return self.FREQUENTITEMSETS
     
-    def findFrequentItems(self):
+    def findFrequentItems(self) -> dict:
         """
         *************************************************
         -         Finding all frequentitems...          -
         *************************************************
         """
-        SingleItemsSupport = self.databaseOptimision()
+        SingleItemsSupport = databaseOptimision(self.DATABASE, self.SingleItems, self.minsupp)
         for item in range(0,self.SingleItems.shape[0]):
             NewItem = [item]
-            self.FREQUENTITEMSETS[self.listToString(NewItem)] = SingleItemsSupport[item]
+            self.FREQUENTITEMSETS[listToString(self.SingleItems,NewItem)] = SingleItemsSupport[item]
             self.FREQUENTITEMSETS = self.hMiner(self.DATABASE,NewItem)
         return self.FREQUENTITEMSETS
     
@@ -326,14 +268,14 @@ class HMine:
             print("#",i+1,FREQUENTITEMSETS_[i],"Supp:",SUPPORTS[i])
 
 class ARM:
-    def __init__(self, data, FIS, minconf, minkulc):
+    def __init__(self, data:tuple, FIS:dict, minconf:float, minkulc:float):
         self.data = data
         self.FIS = FIS
         self.minconf = minconf
         self.minkulc = minkulc
         self.rules = {}
     
-    def findIndex(itemset, FREQUENTITEMSETS):
+    def findIndex(itemset:np.array, FREQUENTITEMSETS:np.array) -> int:
         Index = []
 
         for i in range(0,len(FREQUENTITEMSETS)):
@@ -343,7 +285,7 @@ class ARM:
                     Index = i
         return Index
                 
-    def findRules(self):
+    def findRules(self) -> dict:
         """
         *************************************************
         -     Finding all association rules.            -
