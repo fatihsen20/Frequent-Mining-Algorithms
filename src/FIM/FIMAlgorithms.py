@@ -3,9 +3,7 @@ from itertools import combinations
 
 def showDatabase(DATABASE:np.array, SingleItems:np.array):
     """
-    *************************************************
-    -       This method shows binary database.      -
-    *************************************************
+        This method shows binary database.
     """
     for i in range(0, DATABASE.shape[0]):
         tr = DATABASE[i,:]
@@ -14,10 +12,7 @@ def showDatabase(DATABASE:np.array, SingleItems:np.array):
 
 def databaseOptimision(DATABASE:np.array, SingleItems:np.array, minsupp:int) -> np.array:
     """
-    ***********************************************************
-    *  This method extracts individual items from the         * 
-    *  database that do not exceed the minimum support value. *
-    ***********************************************************
+        This method extracts individual items from the database that do not exceed the minimum support value.
     """
     SingleItemsSupport = np.sum(DATABASE,axis = 0)
     ReminderItem = np.nonzero(SingleItemsSupport >= minsupp)[0]
@@ -28,11 +23,8 @@ def databaseOptimision(DATABASE:np.array, SingleItems:np.array, minsupp:int) -> 
 
 def listToString(SingleItems:np.array,s:list) -> str:
     """
-    *************************************************
-    - This method convert list to string.           -
-    - s: New frequent item list.                    -
-    - s Type: List.                                 -
-    *************************************************
+        This method convert list to string.
+        s: New frequent item list.                    
     """
     str1 = "" 
     for ele in s: 
@@ -42,14 +34,13 @@ def listToString(SingleItems:np.array,s:list) -> str:
 class Apriori:
     def __init__(self,DATABASE:np.array,SingleItems:np.array,minsupp:int):
         """
-        *************************************************
-        - DATABASE: Binary numpy 2d array.              -
-        - SingleItems: Unique string is DATABASE column.-
-        - SingleItems Type: Numpy 1d array.             -
-        - minsupp: Minimum absolute support.            -
-        - minsupp Type: Integer.                        -
-        - FREQUENTITEMSETS: Dictionary.                 -
-        *************************************************
+            DATABASE: Binary numpy 2d array.              
+            SingleItems: Unique string is DATABASE column.
+            SingleItems Type: Numpy 1d array.             
+            minsupp: Minimum absolute support.            
+            minsupp Type: Integer.                       
+            FREQUENTITEMSETS: Dictionary.                 
+        
         """
         self.DATABASE = DATABASE
         self.SingleItems = SingleItems
@@ -58,9 +49,7 @@ class Apriori:
 
     def doesExist(itm,transaction) -> bool:
         """
-        **********************************************************
-        - This method checks the presence of itm in transaction. -
-        **********************************************************
+            This method checks the presence of itm in transaction.
         """
         if sum(transaction[itm]) == len(itm):     
             E=True
@@ -71,9 +60,7 @@ class Apriori:
 
     def calcAbsSup(self,itm) -> int: 
         """
-        **********************************************************
-        -       This method calc the itm absolute support.       -
-        **********************************************************
+            This method calc the itm absolute support.
         """
         AbsSupp = 0
         for i in range(0, self.DATABASE.shape[0]):
@@ -144,6 +131,15 @@ class Apriori:
 
 class Eclat:
     def __init__(self, DATABASE:np.array, SingleItems:np.array, minsupp:int):
+        """
+            DATABASE: Binary numpy 2d array.              
+            SingleItems: Unique string is DATABASE column.
+            SingleItems Type: Numpy 1d array.             
+            minsupp: Minimum absolute support.
+            VDB: Vertical Database.                                    
+            FREQUENTITEMSETS: Dictionary.                 
+        """
+
         self.DATABASE = DATABASE
         self.SingleItems = SingleItems
         self.minsupp = minsupp
@@ -151,6 +147,9 @@ class Eclat:
         self.FREQUENTITEMSETS = {}
     
     def HDtoVDB(self):
+        """
+            This method convert horizontal DB to Vertical DB.
+        """
         NumOfItems = self.DATABASE.shape[1]
         for i in range(0,NumOfItems):
             tmp = []
@@ -165,18 +164,21 @@ class Eclat:
             print(self.SingleItems[i],':',self.VDB[i])
             
     def eclatMiner(self,item,Tid) -> dict:
-     tmp = item[-1]
-     tid = []
-     for itx in range(tmp+1,len(self.VDB)): 
+        """
+            This method includes the recursive part of the eclat algorithm.
+        """
+        tmp = item[-1]
+        tid = []
+        for itx in range(tmp+1,len(self.VDB)): 
          
-         tid = set(Tid).intersection(self.VDB[itx])
+            tid = set(Tid).intersection(self.VDB[itx])
                     
-         if len(tid)>= self.minsupp:
-            NewItem = np.hstack((item,itx))
-            self.FREQUENTITEMSETS[listToString(self.SingleItems,NewItem)] = len(tid)
-            self.FREQUENTITEMSETS = self.eclatMiner(NewItem,tid)
-            tid = []
-     return self.FREQUENTITEMSETS
+            if len(tid)>= self.minsupp:
+                NewItem = np.hstack((item,itx))
+                self.FREQUENTITEMSETS[listToString(self.SingleItems,NewItem)] = len(tid)
+                self.FREQUENTITEMSETS = self.eclatMiner(NewItem,tid)
+                tid = []
+        return self.FREQUENTITEMSETS
     
     def findFrequentItems(self) -> dict:
         _ = databaseOptimision(self.DATABASE, self.SingleItems, self.minsupp)
@@ -206,14 +208,12 @@ class Eclat:
 class HMine:
     def __init__(self, DATABASE:np.array, SingleItems:np.array, minsupp:int):
         """
-        *************************************************
-        - DATABASE: Binary numpy 2d array.              -
-        - SingleItems: Unique string is DATABASE column.-
-        - SingleItems Type: Numpy 1d array.             -
-        - minsupp: Minimum absolute support.            -
-        - minsupp Type: Integer.                        -
-        - FREQUENTITEMSETS: Dictionary.                 -
-        *************************************************
+            DATABASE: Binary numpy 2d array.              
+            SingleItems: Unique string is DATABASE column.
+            SingleItems Type: Numpy 1d array.             
+            minsupp: Minimum absolute support.            
+            minsupp Type: Integer.                        
+            FREQUENTITEMSETS: Dictionary.                 
         """
         self.DATABASE = DATABASE
         self.SingleItems = SingleItems
@@ -222,11 +222,9 @@ class HMine:
 
     def hMiner(self,DATABASE_,itemset) -> dict:
         """
-        *************************************************
-        - This method allows data mining to be done.    -
-        - This method is called for each single item.   -
-        - Searched as DFS.                              -
-        *************************************************
+            This method allows data mining to be done.    
+            This method is called for each single item.   
+            Searched as DFS.                              
         """
         I = np.nonzero(np.sum(DATABASE_[:,itemset],axis = 1) == len(itemset))[0]
         ProjectedDatabase = DATABASE_[I,:]  
@@ -242,9 +240,7 @@ class HMine:
     
     def findFrequentItems(self) -> dict:
         """
-        *************************************************
-        -         Finding all frequentitems...          -
-        *************************************************
+            Finding all frequentitems... 
         """
         SingleItemsSupport = databaseOptimision(self.DATABASE, self.SingleItems, self.minsupp)
         for item in range(0,self.SingleItems.shape[0]):
@@ -287,9 +283,7 @@ class ARM:
                 
     def findRules(self) -> dict:
         """
-        *************************************************
-        -     Finding all association rules.            -
-        *************************************************
+            Finding all association rules.        
         """
         FREQUENTITEMSETS = []
         SUPPORTS = []
