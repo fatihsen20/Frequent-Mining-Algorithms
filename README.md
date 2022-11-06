@@ -6,11 +6,10 @@ pip install FIMProject
 ```python
 from FIM import FIMAlgorithms
 
-algo_obj = FIMAlgorithms.Apriori(DB,SingleItems,MinAbsSupp)
-algo_obj.findFrequentItems()
-algo_obj.showFrequentItems()
-arm = FIMAlgorithms.ARM((DATABASE,SingleItems), algo_obj.FREQUENTITEMSETS, minconf = 0.9, minkulc = 0.4)
-arm.findRules()
+ap = Apriori(DATABASE, SingleItems, 2)
+freq = ap.findFrequentItems()
+ap.showFrequentItems()
+ap.showRules(0.9, 0.4)
 ```
 # What is DATABASE and SingleItems?  
 
