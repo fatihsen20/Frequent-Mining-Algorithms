@@ -39,13 +39,15 @@ class Apriori:
             SingleItems Type: Numpy 1d array.             
             minsupp: Minimum absolute support.            
             minsupp Type: Integer.                       
-            FREQUENTITEMSETS: Dictionary.                 
+            FREQUENTITEMSETS: Dictionary. 
+            rules: Dictionary.                
         
         """
         self.DATABASE = DATABASE
         self.SingleItems = SingleItems
         self.minsupp = minsupp
         self.FREQUENTITEMSETS = {}
+        self.rules = {}
 
     def doesExist(itm,transaction) -> bool:
         """
@@ -128,6 +130,11 @@ class Apriori:
 
         for i in range(0,len(FREQUENTITEMSETS_)):
             print("#",i+1,FREQUENTITEMSETS_[i],"Supp:",SUPPORTS[i])
+        
+    def showRules(self, minconf:float, minkulc:float):
+        arm = ARM((self.DATABASE,self.SingleItems), self.FREQUENTITEMSETS, minconf, minkulc)
+        self.rules = arm.findRules()
+        arm.showRules()
 
 class Eclat:
     def __init__(self, DATABASE:np.array, SingleItems:np.array, minsupp:int):
@@ -204,6 +211,11 @@ class Eclat:
 
         for i in range(0,len(FREQUENTITEMSETS_)):
             print("#",i+1,FREQUENTITEMSETS_[i],"Supp:",SUPPORTS[i])
+    
+    def showRules(self, minconf:float, minkulc:float):
+        arm = ARM((self.DATABASE,self.SingleItems), self.FREQUENTITEMSETS, minconf, minkulc)
+        self.rules = arm.findRules()
+        arm.showRules()
 
 class HMine:
     def __init__(self, DATABASE:np.array, SingleItems:np.array, minsupp:int):
@@ -262,6 +274,11 @@ class HMine:
 
         for i in range(0,len(FREQUENTITEMSETS_)):
             print("#",i+1,FREQUENTITEMSETS_[i],"Supp:",SUPPORTS[i])
+    
+    def showRules(self, minconf:float, minkulc:float):
+        arm = ARM((self.DATABASE,self.SingleItems), self.FREQUENTITEMSETS, minconf, minkulc)
+        self.rules = arm.findRules()
+        arm.showRules()
 
 class ARM:
     def __init__(self, data:tuple, FIS:dict, minconf:float, minkulc:float):
@@ -352,3 +369,23 @@ class ARM:
                                                                                         "Confidince": Confidince, 
                                                                                         "Kulc": Kulc}
         return self.rules    
+
+    def showRules(self):
+        RULES_ = []
+        SUPPORTS = []
+        CONFIDINCES = []
+        KULCS = []
+        for key,value in self.rules.items():
+            RULES_.append(key)
+            SUPPORTS.append(value["Supp"])
+            CONFIDINCES.append(value["Confidince"])
+            KULCS.append(value["Kulc"])
+        
+        I = np.argsort(-np.array(KULCS))
+        RULES_ = [RULES_[i] for i in I]
+        SUPPORTS = [SUPPORTS[i] for i in I]
+        CONFIDINCES = [CONFIDINCES[i] for i in I]
+        KULCS = [KULCS[i] for i in I]
+
+        for i in range(0,len(RULES_)):
+            print("#",i+1,RULES_[i],"Supp:",SUPPORTS[i],"Conf:",CONFIDINCES[i],"Kulc:",KULCS[i])
