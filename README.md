@@ -4,7 +4,7 @@ pip install FIMProject
 ```
 # How to Use It
 ```python
-from FIM import FIMAlgorithms
+from FIM.FIMAlgorithms import Apriori
 
 ap = Apriori(DATABASE, SingleItems, 2)
 freq = ap.findFrequentItems()
