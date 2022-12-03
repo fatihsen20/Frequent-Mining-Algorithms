@@ -19,7 +19,7 @@ def databaseOptimision(DATABASE:np.array, SingleItems:np.array, minsupp:int) -> 
     DATABASE = DATABASE[:,ReminderItem]
     SingleItems = SingleItems[ReminderItem]
     SingleItemsSupport = SingleItemsSupport[ReminderItem]
-    return SingleItemsSupport
+    return DATABASE, SingleItems, SingleItemsSupport
 
 def listToString(SingleItems:np.array,s:list) -> str:
     """
@@ -28,7 +28,7 @@ def listToString(SingleItems:np.array,s:list) -> str:
     """
     str1 = "" 
     for ele in s: 
-        str1 += SingleItems[ele] + ","
+        str1 += str(SingleItems[ele]) + ","
     return str1[:-1]
 
 class Apriori:
@@ -89,7 +89,7 @@ class Apriori:
         return Ck
     
     def findFrequentItems(self) -> dict:
-        _ = databaseOptimision(self.DATABASE, self.SingleItems, self.minsupp)
+        self.DATABASE, self.SingleItems, SingleItemsSupport = databaseOptimision(self.DATABASE, self.SingleItems, self.minsupp)
         NumOfItems = self.DATABASE.shape[1]
         Fk = []
         k=1
@@ -188,7 +188,7 @@ class Eclat:
         return self.FREQUENTITEMSETS
     
     def findFrequentItems(self) -> dict:
-        _ = databaseOptimision(self.DATABASE, self.SingleItems, self.minsupp)
+        self.DATABASE, self.SingleItems, SingleItemsSupport = databaseOptimision(self.DATABASE, self.SingleItems, self.minsupp)
         self.HDtoVDB()
 
         for i in range(0,len(self.VDB)):
@@ -254,7 +254,7 @@ class HMine:
         """
             Finding all frequentitems... 
         """
-        SingleItemsSupport = databaseOptimision(self.DATABASE, self.SingleItems, self.minsupp)
+        self.DATABASE, self.SingleItems, SingleItemsSupport = databaseOptimision(self.DATABASE, self.SingleItems, self.minsupp)
         for item in range(0,self.SingleItems.shape[0]):
             NewItem = [item]
             self.FREQUENTITEMSETS[listToString(self.SingleItems,NewItem)] = SingleItemsSupport[item]
