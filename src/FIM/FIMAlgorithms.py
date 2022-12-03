@@ -144,7 +144,8 @@ class Eclat:
             SingleItems Type: Numpy 1d array.             
             minsupp: Minimum absolute support.
             VDB: Vertical Database.                                    
-            FREQUENTITEMSETS: Dictionary.                 
+            FREQUENTITEMSETS: Dictionary.  
+            rules: Dictionary.               
         """
 
         self.DATABASE = DATABASE
@@ -152,6 +153,7 @@ class Eclat:
         self.minsupp = minsupp
         self.VDB = []
         self.FREQUENTITEMSETS = {}
+        self.rules = {}
     
     def HDtoVDB(self):
         """
@@ -225,12 +227,14 @@ class HMine:
             SingleItems Type: Numpy 1d array.             
             minsupp: Minimum absolute support.            
             minsupp Type: Integer.                        
-            FREQUENTITEMSETS: Dictionary.                 
+            FREQUENTITEMSETS: Dictionary.
+            rules: Dictionary.                
         """
         self.DATABASE = DATABASE
         self.SingleItems = SingleItems
         self.minsupp = minsupp
         self.FREQUENTITEMSETS = {}
+        self.rules = {}
 
     def hMiner(self,DATABASE_,itemset) -> dict:
         """
