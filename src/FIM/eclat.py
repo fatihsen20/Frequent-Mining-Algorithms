@@ -5,7 +5,7 @@ import pandas as pd
 
 from FIM.utils import *
 
-ITEMSETS_SIZE = 0
+ITEMSETS_SIZE = 0.01
 
 def eclat(df:pd.DataFrame,
           min_support:float=0.5,
