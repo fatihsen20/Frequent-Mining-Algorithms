@@ -7,18 +7,40 @@ from FIM.utils import *
 
 ITEMSETS_SIZE = 0.01
 
-def hmine(df:pd.DataFrame, min_support:float=0.5, show_colnames:bool=True, max_len:int=None) -> dict:
 
+def hmine(df: pd.DataFrame,
+          min_support: float = 0.5,
+          show_colnames: bool = True,
+          max_len: int = None
+          ) -> dict:
+    """
+    This method implements the hmine algorithm.
+    It is a depth-first search algorithm.
+    It is a horizontal algorithm, meaning that it uses a horizontal database.
+
+    Args:
+        df (pd.DataFrame): Pandas DataFrame with the transaction database format.
+        min_support (float, optional): A float between 0 and 1 for minumum support of the itemsets returned. Defaults to 0.5.
+        show_colnames (bool, optional): If True, the itemsets in the "itemsets" column
+            will be shown as strings with the column names from the original DataFrame. Defaults to True.
+        max_len (int, optional): Maximum length of the itemsets generated. Defaults to None.
+
+    Raises:
+        ValueError: If `min_support` is not a positive number within the interval `(0, 1)`.
+
+    Returns:
+        pd.DataFrame: Pandas DataFrame with the itemsets (as strings if `show_colnames=True`) and their corresponding support values.
+    """
     global ITEMSETS_SIZE
     ITEMSETS_SIZE = df.shape[0]
-    
+
     if min_support <= 0.0:
         raise ValueError(
             "`min_support` must be a positive "
-            "number within the interval `(0, 1]`. "
+            "number within the interval `(0, 1)`. "
             "Got %s." % min_support
         )
-    
+
     minsupp = math.ceil(min_support * len(df))
     FREQUENTITEMSETS = {}
     itemsets, single_items = itemsets_transformation(df)
@@ -26,7 +48,6 @@ def hmine(df:pd.DataFrame, min_support:float=0.5, show_colnames:bool=True, max_l
                                                                         single_items,
                                                                         minsupp)
     numeric_single_items = np.arange(len(single_items))
-
     for itm in numeric_single_items:
         if single_items_support[itm] >= minsupp:
             itm_support = single_items_support[itm] / ITEMSETS_SIZE
@@ -43,7 +64,7 @@ def hmine(df:pd.DataFrame, min_support:float=0.5, show_colnames:bool=True, max_l
 
     res_df = pd.DataFrame([FREQUENTITEMSETS.values(), FREQUENTITEMSETS.keys()]).T
     res_df.columns = ["support", "itemsets"]
-    
+
     if not show_colnames:
         mapping = {item: idx for idx, item in enumerate(df.columns)}
         res_df["itemsets"] = res_df["itemsets"].apply(
@@ -52,12 +73,14 @@ def hmine(df:pd.DataFrame, min_support:float=0.5, show_colnames:bool=True, max_l
 
     return res_df
 
-def hmine_miner(item:list,
-                itemsets:np.array,
-                minsupp:int,
-                single_items:np.array,
-                FREQUENTITEMSETS:dict,
-                max_len:int=None) -> dict:
+
+def hmine_miner(item: list,
+                itemsets: np.array,
+                minsupp: int,
+                single_items: np.array,
+                FREQUENTITEMSETS: dict,
+                max_len: int = None
+                ) -> dict:
     """
     Driver function for the hmine algorithm.
     Recursively generates frequent itemsets.
@@ -96,10 +119,13 @@ def hmine_miner(item:list,
                                        max_len)
     return FREQUENTITEMSETS
 
-def create_projected_itemsets(item: list, itemsets: np.array) -> np.array:
+
+def create_projected_itemsets(item: list,
+                              itemsets: np.array
+                              ) -> np.array:
     """
     Creates the projected itemsets for the given item.
-   
+
     Args:
         item (list): list of items
         itemsets (np.array): matrix of bools or binary
