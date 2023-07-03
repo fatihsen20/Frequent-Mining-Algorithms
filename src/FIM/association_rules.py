@@ -15,13 +15,6 @@ def association_rules(df:pd.DataFrame,
         raise ValueError(
             "Input DataFrame must contain columns `support` and `itemsets`."
         )
-    
-    columns_ordered = [
-        "antecedent support",
-        "consequent support",
-        "support",
-        "confidence"
-    ]
 
     def confidince_helper(antecedent_supp, consequent_supp, itemset_supp):
         return itemset_supp / antecedent_supp
@@ -67,7 +60,11 @@ def association_rules(df:pd.DataFrame,
                         rule_supports.append([antecedent_support, consequent_support, value])
     
     if not rule_supports:
-        return pd.DataFrame(columns=["antecedents", "consequents"] + columns_ordered)
+        print("No rule generated with min_threshold = '{}' and '{}' metric.".format(min_threshold, metric))
+        return pd.DataFrame(
+            data=list(zip(rule_antecedents, rule_consequents)),
+            columns=["antecedents", "consequents"],
+        )
     
     else:
         rule_supports = np.array(rule_supports).T.astype(float)
@@ -82,12 +79,3 @@ def association_rules(df:pd.DataFrame,
             df_res[key] = value(rule_supports[0], rule_supports[1], rule_supports[2])
             
         return df_res
-
-
-def calc_confidence(itemset:frozenset, antecedent:frozenset, freq_items_dict:dict) -> float:
-    itemset_support = freq_items_dict[itemset]
-    antecedent_support = freq_items_dict[antecedent]
-    return itemset_support / antecedent_support
-
-
-    
