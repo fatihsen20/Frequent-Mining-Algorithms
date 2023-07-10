@@ -10,7 +10,7 @@ freq_items = apriori(df, min_support=0.6, show_colnames=True)
 rules = association_rules(freq_items, metric="confidince", min_threshold=0.7)
 
 ```
-```
+
 # What is df?  
 
 <p>
