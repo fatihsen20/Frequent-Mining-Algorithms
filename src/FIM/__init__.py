@@ -1,5 +1,5 @@
 import FIM
-import utils
+import FIM.utils as utils
 from .apriori import apriori
 from .eclat import eclat
 from .hmine import hmine
