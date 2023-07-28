@@ -10,7 +10,7 @@
 FIMProject requires Python 3.7 or newer, and the easiest way to install it is via
 `pip`:
 ```shell
-pip install FIMProject
+pip install fimproject
 ```
 ## Simple Example
 ```py
