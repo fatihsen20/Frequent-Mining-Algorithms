@@ -12,6 +12,22 @@ FIMProject requires Python 3.7 or newer, and the easiest way to install it is vi
 ```shell
 pip install fimproject
 ```
+
+## Features
+### FIM
+- Apriori Algorithm
+- Eclat Algorithm
+- H-Mine Algorithm
+- Fp-Growth Algorithm
+- Association Rules(confidince, lift, kulc)
+
+## Todo
+### FSM
+- Add GSP Algorithm
+- Add Spade Algorithm
+- Add PrefixSpan Algorithm
+- Add SP-Tree Algorithm 
+
 ## Simple Example
 ```py
 from FIM import apriori
@@ -49,3 +65,6 @@ rules = association_rules(freq_items, metric="confidince", min_threshold=0.7)
 <p>
 df is a pandas dataframe. It is a table of transactions. Each row is a transaction and each column is an item. The value of each cell is the number of items in the transaction.
 </p>
+
+## Contributions
+We would be delighted to receive contributions to this library. We openly welcome all kinds of feedback and are pleased to have contributions to address possible issues or add new features to the development process. Please contribute or raise issues through the GitHub repository.
