@@ -52,7 +52,7 @@ class AssociationRulesErrors(unittest.TestCase, AssociationRulesBase):
     """
     def setUp(self, metric='confidence'):
         AssociationRulesBase.construct(self, metric)
-    
+
     def test_data_type(self):
         """
         Test if itemsets are of type frozenset.
@@ -62,43 +62,43 @@ class AssociationRulesErrors(unittest.TestCase, AssociationRulesBase):
             self.assertIsInstance(antecent, frozenset)
         for consequent in res_df['consequents']:
             self.assertIsInstance(consequent, frozenset)
-    
+
     def test_empty_result(self):
         solution = pd.DataFrame(columns=['antecedents', 'consequents'])
         res_df = association_rules(self.freq_items_df, min_threshold=5)
         assert res_df.equals(solution)
-    
+
     def test_confidence(self):
         self.metric = 'confidence'
         res_df = association_rules(self.freq_items_df, metric=self.metric, min_threshold=0.7)
         assert res_df.shape[0] == 12
-    
+
     def test_lift(self):
         self.metric = 'lift'
         res_df = association_rules(self.freq_items_df, self.metric, min_threshold=1.2)
         assert res_df.shape[0] == 6
-    
+
     def test_kulc(self):
         self.metric = 'kulc'
         res_df = association_rules(self.freq_items_df, self.metric, min_threshold=0.8)
         assert res_df.shape[0] == 2
-    
+
     def test_default(self):
         """
         Test association rules with default values.
         """
         solution = pd.DataFrame(
-            [[frozenset({'beef'}), frozenset({'eggs'}), 0.45454545454545453, 
-              0.8181818181818182, 0.36363636363636365, 0.8, 0.9777777777777777,0.6222222222222222],
+            [[frozenset({'beef'}), frozenset({'eggs'}), 0.45454545454545453,
+              0.8181818181818182, 0.36363636363636365, 0.8, 0.9777777777777777, 0.6222222222222222],
              [frozenset({'beef'}), frozenset({'onion'}), 0.45454545454545453,
               0.6363636363636364, 0.36363636363636365, 0.8, 1.2571428571428573, 0.6857142857142857],
-             [frozenset({'carrot'}), frozenset({'beer'}), 0.36363636363636365, 
+             [frozenset({'carrot'}), frozenset({'beer'}), 0.36363636363636365,
               0.7272727272727273, 0.36363636363636365, 1.0, 1.375, 0.75],
              [frozenset({'crisps'}), frozenset({'beer'}), 0.7272727272727273, 0.7272727272727273,
               0.5454545454545454, 0.7499999999999999, 1.0312499999999998, 0.7499999999999999],
              [frozenset({'beer'}), frozenset({'crisps'}), 0.7272727272727273, 0.7272727272727273,
               0.5454545454545454, 0.7499999999999999, 1.0312499999999998, 0.7499999999999999],
-             [frozenset({'beer'}), frozenset({'eggs'}), 0.7272727272727273, 0.8181818181818182, 
+             [frozenset({'beer'}), frozenset({'eggs'}), 0.7272727272727273, 0.8181818181818182,
               0.5454545454545454, 0.7499999999999999, 0.9166666666666665, 0.7083333333333333],
              [frozenset({'crisps'}), frozenset({'eggs'}), 0.7272727272727273, 0.8181818181818182,
               0.5454545454545454, 0.7499999999999999, 0.9166666666666665, 0.7083333333333333],
@@ -113,7 +113,6 @@ class AssociationRulesErrors(unittest.TestCase, AssociationRulesBase):
              [frozenset({'onion', 'eggs'}), frozenset({'crisps'}), 0.45454545454545453,
               0.7272727272727273, 0.36363636363636365, 0.8, 1.1, 0.65]],
             columns=self.columns)
- 
+
         res_df = association_rules(self.freq_items_df)
         assert res_df.equals(solution), res_df
-
