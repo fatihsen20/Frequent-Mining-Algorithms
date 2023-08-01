@@ -1,13 +1,15 @@
 import numpy as np
 import pandas as pd
 
-def itemsets_transformation(df:pd.DataFrame) -> tuple:
+
+def itemsets_transformation(df: pd.DataFrame) -> tuple:
 
     assert len(df) != 0, "Dataframe is empty"
     itemsets = df.values
     single_items = np.array(df.columns)
 
     return itemsets, single_items
+
 
 def itemset_optimisation(
     itemsets: np.array,
@@ -38,11 +40,12 @@ def itemset_optimisation(
 
     return itemsets, single_items, single_items_support
 
+
 class TransactionEncoder():
     def __init__(self) -> None:
         pass
 
-    def fit(self, itemsets:list) -> object:
+    def fit(self, itemsets: list) -> object:
         """
         This method creates a list of unique items in the dataset.
 
@@ -52,13 +55,13 @@ class TransactionEncoder():
         unique_items = []
         for transaction in itemsets:
             for item in transaction:
-                if not item in unique_items:
+                if item not in unique_items:
                     unique_items.append(item)
         self.columns = sorted(unique_items)
         self.columns_dict = {item: idx for idx, item in enumerate(self.columns)}
         return self
-    
-    def transform(self, itemsets:list, set_pandas=True) -> np.array:
+
+    def transform(self, itemsets: list, set_pandas=True) -> np.array:
         """
         This method converts the dataset into a binary matrix.
 
@@ -73,8 +76,8 @@ class TransactionEncoder():
         if set_pandas:
             return pd.DataFrame(output, columns=self.columns)
         return output
-    
-    def inverse_transform(self, itemsets:list) -> list:
+
+    def inverse_transform(self, itemsets: list) -> list:
         """
         This method converts the binary matrix into a dataset.
 
@@ -89,8 +92,8 @@ class TransactionEncoder():
                     tmp.append(self.columns[idx])
             output.append(tmp)
         return output
-    
-    def fit_transform(self, itemsets:list, set_pandas=True) -> np.array:
+
+    def fit_transform(self, itemsets: list, set_pandas=True) -> np.array:
         """
         This method combines fit and transform methods.
 
@@ -98,7 +101,3 @@ class TransactionEncoder():
             itemsets (list): dataset
         """
         return self.fit(itemsets).transform(itemsets, set_pandas=set_pandas)
-
-    
-
-            
