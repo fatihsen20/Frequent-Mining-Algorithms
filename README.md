@@ -56,7 +56,7 @@ df = te.fit_transform(data, set_pandas=True)
 # Now, let us return the items and itemsets with at least 30% support:
 freq_items = apriori(df, min_support=0.3)
 # Now, let us return the association rules with freq_items df:
-rules = association_rules(freq_items, metric="confidince", min_threshold=0.7)
+rules = association_rules(freq_items, metric="confidence", min_threshold=0.7)
 
 ```
 
